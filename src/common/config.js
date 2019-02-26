@@ -138,8 +138,8 @@ const api = {
     region: process.env.UPLOAD_SERVER + '/region/level-list/',
     draggable: {
         base: '/basic-manager/basic-attribute',
-        list: '/module-manager/module/height/{height}/module-list',
-        height: '/module-manager/module/height-list',
+        list: '/component-manager/components/height/{height}',
+        height: '/component-manager/component/heights',
         template: '/layout-manager/layout/{id}',
 	    templates: '/layout-manager/layouts',
         layout: '/rec-group-manager/rec-group/{id}/layout',

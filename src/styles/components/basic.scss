@@ -309,6 +309,9 @@
             }
         }
     }
+    &.wi-input-small{
+        .ivu-input-number{min-width: 88px;}
+    }
     &.wi-input-format{
         .ivu-input-number{
             .ivu-input-number-input-wrap{
@@ -515,6 +518,10 @@
         .ivu-select{
             width: 288px;
         }
+    }
+    .ivu-select-multiple{
+        width: 100%;
+        max-width: 400px;
     }
     .ivu-select-selection{
         min-width: 50px;

@@ -85,6 +85,8 @@ $textBorder: #DDDEE1;
                         justify-content: center;
                         height: 100%;
                         padding: 35px 20px;
+                        overflow: hidden;
+                        word-break: break-all;
                         .wi-modal-icon{
                             position: relative;
                             top: unset;
