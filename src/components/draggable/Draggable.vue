@@ -834,7 +834,7 @@
         		const vm = this,
 			        url = vm.parseUrl(vm.setting.api.list, {height: vm.search.height});
         		let list = [];
-        		vm.$api.post(url, vm.search.condition, (res) => {
+        		vm.$api.get(url, vm.search.condition, (res) => {
         			if(res['ret']['retCode'].toString() === '0'){
         				vm.$set(vm, 'items', list);
         				list = vm.parseComponentData(res.data, false);
