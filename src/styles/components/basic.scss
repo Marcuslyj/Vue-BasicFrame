@@ -100,6 +100,7 @@
 .padding0, .p0{padding: 0 !important;}
 .padding10, .p10{padding: 10px;}
 .padding20, .p20{padding: 20px;}
+.lh22{line-height: 22px;}
 
 /* btn */
 .wi-btn{
@@ -189,6 +190,9 @@
             font-size: 14px !important;
         }
     }
+    &.wi-cascader-large{
+        .ivu-cascader{width: 300px;}
+    }
 }
 
 /* card */
@@ -232,6 +236,93 @@
     .ivu-card-body{
         padding: 24px;
     }
+    &.wi-card-transfer{
+        .ivu-card-body{
+            padding-bottom: 0;
+        }
+        .ivu-tabs{
+            padding-bottom: 24px;
+        }
+    }
+}
+.wi-card-modal{
+    .ivu-card-body{
+        padding: 16px;
+    }
+    .ivu-card-extra{
+        right: 9px;
+        top: 3px;
+        i{
+            font-size: 24px;
+            cursor: pointer;
+        }
+    }
+    .wi-card-apk,
+    .wi-card-special,
+    .wi-card-url{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        a{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    .wi-card-url{
+        a{
+            background: #F1F1F1;
+            width: 100%;
+            overflow: hidden;
+            word-break: break-all;
+            border-radius: 4px;
+            i{
+                font-size: 22px;
+                padding: 8px;
+            }
+            span{
+                padding: 0 16px;
+                border-left: 1px solid #CCC;
+                line-height: 22px;
+            }
+        }
+    }
+    .wi-card-special{
+        background: #F1F1F1;
+        padding: 12px 16px;
+        border-radius: 4px;
+        .wi-card-specail-image{
+            width: 55px;
+            height: 55px;
+            img{
+                width: 100%;
+                height: 100%;
+                border-radius: 4px;
+            }
+        }
+        .wi-card-special-text{
+            display: flex;
+            flex-direction: column;
+            padding-left: 12px;
+            color: rgba(0, 0, 0, .8);
+            line-height: 24px;
+            span:last-child{
+                color: rgba(0, 0, 0, .3);
+            }
+        }
+    }
+    .wi-card-apk{
+        width: 100%;
+        overflow: hidden;
+        .wi-form{
+            min-width: 850px;
+        }
+        .wi-text{
+            max-width: 320px !important;
+            word-break: break-all;
+            line-height: 22px;
+        }
+    }
 }
 
 /* pagination */
@@ -270,6 +361,13 @@
     &.left{
         justify-content: flex-start;
     }
+    .wi-pagination-other{
+        display: flex;
+        position: absolute;
+        left: 0;
+        color: rgba(0, 0, 0, .35);
+        cursor: pointer;
+    }
 }
 
 /* input */
@@ -280,6 +378,9 @@
     }
     &.wi-input-large{
         input.ivu-input{width: 288px;}
+    }
+    &.wi-input-custom{
+        input.ivu-input{width: 100%;}
     }
     .ivu-input-group-large{
         .ivu-input-group-prepend,
@@ -516,7 +617,7 @@
     }
     &.wi-select-large{
         .ivu-select{
-            width: 288px;
+            width: 300px;
         }
     }
     .ivu-select-multiple{
@@ -664,4 +765,31 @@
             }
         }
     }
+}
+
+/** iframe */
+.wi-iframe{
+    width: 100%;
+    border: none;
+}
+.wi-iframe-content{
+    padding: 0 !important;
+}
+
+.wi-image{
+    width: 120px;
+    cursor: pointer;
+    max-height: 300px;
+}
+
+.wi-steps{
+    .ivu-steps-item{
+        cursor: pointer;
+    }
+}
+
+.wi-tips{
+    color: #ed4014;
+    font-size: 12px;
+    margin-top: 8px;
 }

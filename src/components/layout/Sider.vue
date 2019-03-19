@@ -16,7 +16,7 @@
                             <!-- submenu : if -->
                             <AccordionMenuItem :items="item" :key="prefix + item.name" v-if="item.children && item.children.length > 0"></AccordionMenuItem>
                             <!-- menuitem : else -->
-                            <MenuItem :name="item.name" v-else>
+                            <MenuItem :name="item.name" :key="prefix + item.name" v-else>
                                 <span class="wi-menu-icon" v-if="item.icon"><icon :type="item.icon"></icon></span>
                                 <router-link :to="{path: item.path}" :class="item.icon ? '' : 'wi-menu-link'" v-html="item.title" v-if="!G.regExps.url.test(item.path)"></router-link>
                                 <a :href="item.path" target="_blank" v-html="item.title" v-if="G.regExps.url.test(item.path)"></a>
@@ -131,7 +131,7 @@
                         }
                         return res;
                     };
-                let state = false;
+                let state = false, flag = false, first = null;
                 for(let i = 0; i < length; i++){
                     const cur = menu[i],
                         children = cur['listChildren'],
@@ -141,13 +141,17 @@
                             name: cur['resid'],
                             children: []
                         };
+                    if(i === 0) first = item;
                     if(children && children.length > 0){
                         item.children = getChildren(children);
                     }else{
                         delete item.children;
-                        if(i === 0){
+                        const path = vm.$route.path,
+                            url = cur['resparam'];
+                        if(url === path || path.indexOf(url + '/') !== -1){
                             vm.$set(vm.G.menu, 'active', item.name);
                             vm.$set(vm.menu, 'active', item.name);
+                            flag = true;
                         }
                         item.path = cur['resparam'];
                     }
@@ -156,6 +160,10 @@
                         vm.$set(vm.menu, 'open', [item.name]);
                     }
                     temp.push(item);
+                }
+                if(!flag && first && !state){
+                    vm.$set(vm.G.menu, 'active', first.name);
+                    vm.$set(vm.menu, 'active', first.name);
                 }
                 return temp;
             },

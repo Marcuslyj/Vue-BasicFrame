@@ -125,6 +125,17 @@ exports.install = (Vue) => {
     };
     
     /**
+     * check url.
+     * @param url
+     * @returns {boolean}
+     */
+    Vue.prototype.isUrl = function(url) {
+        const vm = this,
+            reg = new RegExp(vm.G.regExps.url);
+        return reg.test(url);
+    };
+    
+    /**
      * set parent's iframe height
      * if `G.embed` is trued.
      * @returns {null}
@@ -157,15 +168,16 @@ exports.install = (Vue) => {
     /**
      * monitor iframe's height.
      * if change, setInterval & clearInterval.
+     * @param time
      */
-    Vue.prototype.monitorIframeHeight = function() {
+    Vue.prototype.monitorIframeHeight = function(time) {
         const vm = this,
             handler = setInterval(() => {
                 vm.setIframeHeight();
-            }, 1);
+            }, 10);
         setTimeout(() => {
             clearInterval(handler);
-        }, 1000);
+        }, time ? time : 10000);
     };
     
     /**
@@ -559,6 +571,48 @@ exports.install = (Vue) => {
     };
     
     /**
+     * get session storage.
+     * @param keys
+     */
+    Vue.prototype.getStorage = function(keys) {
+        let data = {};
+        if(Array.isArray(keys)){
+            for(let i = 0; i < keys.length; i++){
+                const item = keys[i];
+                data[item] = item ? JSON.parse(sessionStorage.getItem(item)) : null;
+            }
+        }else{
+            data = null;
+            if(keys) data = JSON.parse(sessionStorage.getItem(keys));
+        }
+        return data;
+    };
+    
+    /**
+     * set session storage.
+     * @param key
+     * @param data
+     */
+    Vue.prototype.setStorage = function(key, data) {
+        sessionStorage.setItem(key, JSON.stringify(data));
+    };
+    
+    /**
+     * delete session storage.
+     * @param keys
+     */
+    Vue.prototype.delStorage = function(keys) {
+        if(Array.isArray(keys)){
+            for(let i = 0; i < keys.length; i++){
+                const item = keys[i];
+                if(item) sessionStorage.removeItem(item);
+            }
+        }else{
+            if(keys) sessionStorage.removeItem(keys);
+        }
+    };
+    
+    /**
      * history back.
      * `$router.push();`
      */
@@ -625,6 +679,31 @@ exports.install = (Vue) => {
             style: {'text-align': align || 'left'},
             attrs: {title: value}
         }, value);
+    };
+    
+    /**
+     * render(title).
+     * @param h
+     * @param main
+     * @param sub
+     * @param classes
+     * @param align
+     * @returns {*}
+     */
+    Vue.prototype.renderTitle = function(h, main, sub, classes, align) {
+        const vm = this;
+        main = vm.formatEmpty(main);
+        if(vm.isEmpty(sub)) return vm.renderColumn(h, main, classes, align);
+        else{
+            return h('Row', {
+                class: classes ? classes : 'wi-table-cell-text',
+                style: {'text-align': align || 'left'},
+                attrs: {title: main}
+            }, [
+                h('Row', {class: 'wi-main-title'}, main),
+                h('Row', {class: 'wi-sub-title'}, sub)
+            ]);
+        }
     };
     
     /**
@@ -706,6 +785,36 @@ exports.install = (Vue) => {
                 }, vm.formatEmpty(sub)) : '',
                 extend ? extend : ''
             ]) : ''
+        ]);
+    };
+    
+    /**
+     * render(InputNumber).
+     * @param h
+     * @param params
+     * @param config
+     * @returns {*}
+     */
+    Vue.prototype.renderNumber = function(h, params, config) {
+        return h('Row', {
+            class: 'wi-input wi-input-small'
+        }, [
+            h('InputNumber', {
+                props: {
+                    value: params.row[config.field || params.column.key],
+                    size: config.size || 'large',
+                    min: config.min || 0,
+                    max: config.max || 99999,
+                    precision: config.precision || 0
+                },
+                on: {
+                    'on-change': (value) => {
+                        if(config.change && typeof config.change === 'function'){
+                            config.change.call(this, value);
+                        }
+                    }
+                }
+            })
         ]);
     };
     

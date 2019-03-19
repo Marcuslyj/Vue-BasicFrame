@@ -17,6 +17,18 @@ $textBorder: #DDDEE1;
             max-height: 90%;
         }
     }
+    &.wi-modal{
+        .wi-modal-body{
+            padding: 12px 24px 24px;
+        }
+        .wi-modal-title{
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        .wi-modal-content{
+
+        }
+    }
     .wi-modal-custom-content{
         form{
             padding: 24px;
@@ -127,6 +139,17 @@ $textBorder: #DDDEE1;
     .ivu-modal-footer{
         .ivu-btn-text{
             border: 1px solid #E0E0E0;
+        }
+    }
+    .wi-compare-poster{
+        >>> .ivu-modal-content{
+            background: rgba(0, 0, 0, 0);
+            text-align: center;
+        }
+        .wi-compare-text{
+            color: #FFF;
+            font-size: 14px;
+            margin: 5px;
         }
     }
 }
