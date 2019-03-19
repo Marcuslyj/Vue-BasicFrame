@@ -111,6 +111,7 @@
                 document.domain = hosts.join('.');
                 vm.$nextTick(() => {
                     vm.setIframeHeight();
+                    vm.monitorIframeHeight();
                 });
             }
         }

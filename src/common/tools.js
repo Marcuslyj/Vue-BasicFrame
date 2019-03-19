@@ -174,7 +174,7 @@ exports.install = (Vue) => {
         const vm = this,
             handler = setInterval(() => {
                 vm.setIframeHeight();
-            }, 10);
+            }, 20);
         setTimeout(() => {
             clearInterval(handler);
         }, time ? time : 10000);
