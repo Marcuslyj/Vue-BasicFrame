@@ -164,6 +164,22 @@
             cursor: pointer;
         }
     }
+    .wi-table-cell-text{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .wi-main-title,
+    .wi-sub-title{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .wi-sub-title{
+        font-size: 12px;
+        color: rgba(0, 0, 0, .5);
+        line-height: 22px;
+    }
 }
 .ivu-table-popper{
     .ivu-checkbox-wrapper{

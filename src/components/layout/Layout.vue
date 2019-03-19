@@ -109,11 +109,9 @@
                     hosts = host.split('.');
                 hosts.shift();
                 document.domain = hosts.join('.');
-                if(vm.G.embed){
-                    vm.$nextTick(() => {
-                        vm.setIframeHeight();
-                    });
-                }
+                vm.$nextTick(() => {
+                    vm.setIframeHeight();
+                });
             }
         }
     };

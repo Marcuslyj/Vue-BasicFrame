@@ -1,3 +1,9 @@
+.wi-draggable-form-item{
+    .ivu-form-item-content{
+        overflow: hidden;
+    }
+    overflow: hidden;
+}
 .wi-draggable{
     width: 100%;
     .wi-search{
@@ -65,7 +71,7 @@
                 will-change: margin;
                 transition: margin .4s ease;
                 .wi-draggable-item{
-                    margin-right: 17px;
+                    margin-right: 15px;
                     cursor: move;
                     display: block;
                     flex-shrink: 0;
@@ -177,6 +183,7 @@
             .wi-draggable-content{
                 .wi-draggable-list{
                     .wi-draggable-item{
+                        &:last-child{margin-right: 0 !important;}
                         .wi-draggable-item-one{
                             background: $theme;
                             color: $white;

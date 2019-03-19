@@ -184,17 +184,21 @@
 	 * [ rows [Array]]: 初始化数据, 具体格式请查看接口响应数据(initialization datas).
 	 * [ exec [Any]]: 数据变更，重新渲染的执行标识(reinitialized if the value of `exec` is changed, recommended use `this.$unique()`).
 	 * [ active [Number]]: 当前选中的推荐行, 从`1`开始(tab of currently selected, start from 1).
+	 * [ selected [Any]]: 默认选中的推荐位(the recommended position selected by default).
 	 * [ click [Boolean]]: 是否可点击(whether can click).
 	 * [ click-call [Callback]]: 点击组件块的事件回调 - 选中(callback after click component's block - selection).
 	 * [ click-cancel [Callback]]: 再次点击组件块, 将取消选中(when component's block is clicked again, the event take place).
 	 * [ finish [Callback]]: 初始化完成后的回调(callback after initialization).
-	 * [ reacquire [Any]]: 执行再次获取组件数据的状态标识(change this value to trigger reacquisition of data).
-	 * [ layout-data [Callback]]: 获取组件数据的回调(get componet's data if `reacquire` is changed).
-	 * [ template-data [Callback]]: 获取`常用模板`数据的回调(get common template data when select the single one).
-	 * [ filling [String | Boolean]]: 执行数据填充(filling block content if the value is changed).
-	 * [ increase [Boolean|Array|Object]]: 单个内容填充(filling data, see watcher `increase`).
-	 * [ decrease [Boolean|Array|Object]]: 移除指定内容(remove data, see watcher `decrease`).
-	 * [ config [Object]]: 其它配置选项, 具体见如下说明(other configuration, see the specific instructions below).
+	 * [ reacquire [Any]]: 执行再次获取组件数据的状态标识(Changing this value to trigger reacquisition of data).
+	 * [ layout-data [Callback]]: 获取组件数据的回调(Getting componet's data if `reacquire` is changed).
+	 * [ template-data [Callback]]: 获取`常用模板`数据的回调(Getting common template data when select the single one).
+	 * [ switch-tab [Callback]]: 切换推荐行的回调(The callback of switching recommended row).
+	 * [ check [Any]]: 是否校验, 即检查内容是否填充完整(Verify that the content has been filled in completely).
+	 * [ check-call [Callback]]: 校验内容是否填充完整的回调(Callback if the varialbe `check` is changed).
+	 * [ filling [String | Boolean]]: 执行数据填充(Filling block content if the value is changed).
+	 * [ increase [Boolean|Array|Object]]: 单个内容填充(Filling data, see watcher `increase`).
+	 * [ decrease [Boolean|Array|Object]]: 移除指定内容(Removing data, see watcher `decrease`).
+	 * [ config [Object]]: 其它配置选项, 具体见如下说明(Other configuration, see the specific instructions below).
 	 *      ``` --------------------------------------------------------------------------------
 	 *      3.1. `config` 参数说明(parameters of called config):
 	 *      [ api [Object]]: 请求接口配置, 如下(api, has default values, customizable configuration):
@@ -275,12 +279,12 @@
 	 *  [
 	 *      {
 	 *          layoutRowId: 288,
-	 *          layoutRowModules: [
+	 *          layoutRowComponents: [
 	 *              {
-	 *                  groupRowModuleId: 3035,
-	 *                  moduleId: 55,
-	 *                  moduleHeight: 488,
-	 *                  moduleWidth: 1300,
+	 *                  groupRowComponentId: 3035,
+	 *                  componentId: 55,
+	 *                  componentHeight: 488,
+	 *                  componentWidth: 1300,
 	 *                  positionNum: 1,
 	 *                  recPositions: [
 	 *                      {
@@ -440,7 +444,7 @@
 	    mapping = {
             row: {
                 id: 'layoutRowId',
-	            blocks: 'layoutRowModules',
+	            blocks: 'components',
 	            group: 'groupRowId',
 	            list: 'groupRows'
             },
@@ -450,9 +454,9 @@
 		        pos: 'titlePosition',
 		        back: {
                     id: 'id',
-			        mid: 'recRowModuleId',
+			        mid: 'recRowComponentId',
 			        rid: 'recRowId',
-			        module: 'recModuleId',
+			        module: 'recComponentId',
 			        pos: 'pos',
 			        type: 'type'
 		        }
@@ -462,19 +466,20 @@
 		        top: 'topMargin',
 		        group: 'recGroupInterval',
 		        row: 'recRowInterval',
-		        block: 'recModuleInterval',
+		        block: 'recComponentInterval',
 		        pos: 'recPositionInterval'
 	        },
-	        module: {
-                id: 'moduleId',
-		        list: 'modules',
+	        component: {
+                id: 'componentId',
+		        rows: 'layoutRowComponents',
+		        list: 'components',
 		        cross: 'isCrossScreen',
-		        gid: 'groupRowModuleId',
+		        gid: 'groupRowComponentId',
 		        pid: 'recPositionId',
 		        init: 'recInitData',
                 number: 'positionNum',
-		        width: 'moduleWidth',
-		        height: 'moduleHeight',
+		        width: 'componentWidth',
+		        height: 'componentHeight',
 		        position: 'recPositions'
 	        },
 	        attrs: {
@@ -533,9 +538,11 @@
                     ok: 'click-call',
 				    cancel: 'click-cancel'
 			    },
-			    finish: 'finish'
+			    finish: 'finish',
+			    check: 'check-call'
 		    }
-	    };
+	    },
+	    any = [Boolean, String, Number, Array, Object];
     /** row component */
     const RowComponent = Vue.extend({
 	    props: {
@@ -637,14 +644,22 @@
                 defalut: false
             },
 	        reacquire: {
-        	    type: [Boolean, String, Number, Array, Object]
+        	    type: any
 	        },
 	        active: {
                 type: Number,
                 default: 0
             },
+	        selected: {
+        	    type: any,
+		        default: false
+	        },
+	        check: {
+        	    type: any,
+		        default: false
+	        },
 	        filling: {
-        	    type: [String, Boolean, Number],
+        	    type: any,
 		        default: false
 	        },
 	        increase: {
@@ -656,9 +671,13 @@
 		        default: false
 	        },
 	        reset: {
-        	    type: [Boolean, String, Number],
+        	    type: any,
 		        default: false
-	        }
+	        },
+	        disabled: {
+        	    type: Boolean,
+		        default: false
+	        },
         },
         data() {
         	const vm = this,
@@ -775,7 +794,7 @@
         				if(!vm.init) vm.getComponentHeightData();
         	            vm.$nextTick(() => {
         	                vm.emitComponentBaseData();
-        	                if(vm.setting.assembled) vm.initDraggableSource();
+        	                if(vm.setting.assembled && !vm.disabled) vm.initDraggableSource();
         	            });
 			        }else{
         				vm.$error(res['ret']['retMsg']);
@@ -834,7 +853,7 @@
         		const vm = this,
 			        url = vm.parseUrl(vm.setting.api.list, {height: vm.search.height});
         		let list = [];
-        		vm.$api.get(url, vm.search.condition, (res) => {
+        		vm.$api.get(url, {}, (res) => {
         			if(res['ret']['retCode'].toString() === '0'){
         				vm.$set(vm, 'items', list);
         				list = vm.parseComponentData(res.data, false);
@@ -874,14 +893,14 @@
         		if(datas && datas.length > 0){
         		    datas.forEach((item) => {
 	                    const data = [],
-					        num = parseInt(item[mapping.module.number]),
-					        width = parseInt(item[mapping.module.width]),
-					        height = parseInt(item[mapping.module.height]),
-					        mid = parseInt(item[mapping.module.id]);
+					        num = parseInt(item[mapping.component.number]),
+					        width = parseInt(item[mapping.component.width]),
+					        height = parseInt(item[mapping.component.height]),
+					        mid = parseInt(item[mapping.component.id]);
 	                    let h;
-	                    if(item[mapping.module.position]){
+	                    if(item[mapping.component.position]){
 	                        /* one block, many position. */
-	                        item[mapping.module.position].map((pos, k) => {
+	                        item[mapping.component.position].map((pos, k) => {
 	                            h = Math.round((pos.height * ratio) * 100) / 100;
 	                            let one = {
 	                                mid: mid,
@@ -892,9 +911,9 @@
 	                                    width: width,
 								        height: pos.height
 							        },
-							        position: pos[mapping.module.pid],
-							        relate: item[mapping.module.gid],
-							        initData: pos[mapping.module.init] ? pos[mapping.module.init] : []
+							        position: pos[mapping.component.pid],
+							        relate: item[mapping.component.gid],
+							        initData: pos[mapping.component.init] ? pos[mapping.component.init] : []
 						        };
 	                            if(k === num - 1) one.space = 0;
 	                            data.push(one);
@@ -942,7 +961,7 @@
 					        }
 				        }
 	                    list.push({
-					        id: item.moduleId,
+					        id: item[mapping.component.id],
 					        number: num,
 					        width: width,
 					        height: height,
@@ -983,7 +1002,7 @@
 	        			const cur = tabs[i], data = [], commonly = [],
 					        items = cur.getElementsByClassName(classes.drag.item),
 					        target = cur.getElementsByClassName(classes.drag.box);
-	        			params[mapping.module.cross] = 0;
+	        			params[mapping.component.cross] = 0;
 	        			let width = 0, name, setting;
 	        			/** `title` setting */
                         if(target){
@@ -1046,16 +1065,16 @@
 	        					    single[mapping.fields.width] = variable.width;
 	        					    single[mapping.fields.height] = variable.height;
 	        						if(variable.position && !isNaN(variable.position))
-	        						    single[mapping.module.pid] = variable.position;
+	        						    single[mapping.component.pid] = variable.position;
 	        						temporary.push(single);
 						        }
 	        					let modules = {};
-	        					modules[mapping.module.id] = id;
-	        					modules[mapping.module.number] = num;
+	        					modules[mapping.component.id] = id;
+	        					modules[mapping.component.number] = num;
 	        					modules[mapping.fields.width] = w;
 	        					modules[mapping.fields.height] = height;
-	        					modules[mapping.module.position] = temporary;
-	        					if(relate) modules[mapping.module.gid] = relate;
+	        					modules[mapping.component.position] = temporary;
+	        					if(relate) modules[mapping.component.gid] = relate;
 	        					data.push(modules);
 	        					width += Math.round(w * vm.setting.base.ratio);
 	        					if(n < items.length - 1) width += Math.round(vm.setting.base.block * vm.setting.base.ratio);
@@ -1066,10 +1085,10 @@
 							        && !params[mapping.row.group]
 							        && !vm.setting.template.is
 						        ) params[mapping.row.group] = row;
-	        					params[mapping.module.list] = data;
+	        					params[mapping.component.list] = data;
 					        }
 	        				if(width > standard + Math.round(vm.setting.base.left * vm.setting.base.ratio))
-	        				    params[mapping.module.cross] = 1;
+	        				    params[mapping.component.cross] = 1;
 	        				rows.push(params);
 	        				groups[mapping.row.list] = rows;
 				        }
@@ -1080,6 +1099,35 @@
 			        }
 		        }
 	        	return validate ? (vm.setting.template.is ? template : groups) : [];
+	        },
+	        
+	        /**
+	         * Verify that the content has been filled in completely.
+	         * emit `check-call`.
+	         */
+	        checkContentCompletely() {
+	            const vm = this,
+		            rows = vm.rows;
+	            let result = false;
+	            if(rows && Object.keys(rows).length > 0){
+	                const content = rows.content,
+		                layouts = rows.layout,
+		                groups = layouts['groupRows'] ? layouts['groupRows'] : [],
+		                array = [];
+	                let number = 0;
+	                for(let i = 0; i < content.length; i++){
+	                    const cur = content[i],
+		                    pid = cur['recPositionId'];
+	                    if(vm.inArray(pid, array) === -1) array.push(pid);
+	                }
+	                for(let n = 0; n < groups.length; n++){
+	                    const active = groups[n],
+		                    components = active['components'];
+	                    number += components.length;
+	                }
+	                result = array.length >= number;
+	            }
+	            vm.$emit(broadcast.callback.check, result);
 	        },
 	
 	        /**
@@ -1667,9 +1715,9 @@
 	        		const modules = data[mapping.row.blocks];
 	        		let w = 0;
 	        		modules.map((module, k) => {
-	        			const num = module[mapping.module.number],
-					        width = module[mapping.module.width],
-					        height = module[mapping.module.height];
+	        			const num = module[mapping.component.number],
+					        width = module[mapping.component.width],
+					        height = module[mapping.component.height];
 	        			if(num > 1){
 	        				const spacing = vm.setting.base.space * (num - 1),
 						        h = Math.round((height - spacing) / num * 100) / 100;
@@ -1845,7 +1893,7 @@
 	                    const blocks = item[mapping.row.blocks];
 	                    if(blocks && blocks.length > 0){
 	                        blocks.forEach((block, key) => {
-	                            width += block[mapping.module.width];
+	                            width += block[mapping.component.width];
 	                            if(key < blocks.length - 1) width += vm.setting.base.block;
 	                        });
 	                        widths.push(width);
@@ -1879,7 +1927,7 @@
 	            bus.$on(broadcast.init, (data) => {
 	                vm.$nextTick(() => {
 	                    const row = data ? data : vm.drag.rows.key;
-	                    vm.initDraggableTarget(row);
+	                    if(!vm.disabled) vm.initDraggableTarget(row);
 	                });
 	            });
 	            bus.$on(broadcast.align, (active) => {
@@ -2015,7 +2063,7 @@
 	        		vm.resetDraggable();
 	        		rows.forEach((item, i) => {
 	        			const id = i > 0 ? (prefix.target + vm.drag.rows.num) : vm.name;
-	        			let data = item[mapping.row.blocks],
+	        			let data = item[mapping.row.blocks] ? item[mapping.row.blocks] : item[mapping.component.rows],
 					        rowId = item[mapping.row.id];
 	        			if(typeof item[mapping.content.title] !== 'undefined'){
 	        				rowId = item[mapping.row.id];
@@ -2059,7 +2107,7 @@
 				        };
 			        });
 	        		vm.$nextTick(() => {
-	        			if(vm.setting.assembled) vm.initDraggableSource();
+	        			if(vm.setting.assembled && !vm.disabled) vm.initDraggableSource();
 	        			if(Object.keys(template).length > 0){
 	        				Object.keys(template).forEach((key) => {
 	        					const cur = template[key],
@@ -2075,7 +2123,7 @@
 	        							if(typeof vm.drag.instance.target[key] === 'undefined'){
 	        								const keys = key.split('-'),
 										        target = parseInt(keys[1]);
-	        								vm.initDraggableTarget(target);
+	        								if(!vm.disabled) vm.initDraggableTarget(target);
 								        }
 							        }else vm.setComponentBodyWidth(key);
 	        						vm.switchComponentTarget(node);
@@ -2106,7 +2154,7 @@
 										        destroy() {this.$destroy();}
 									        }
 								        });
-	        							vm.initDraggableTarget(row);
+	        							if(!vm.disabled) vm.initDraggableTarget(row);
 	        							if(t === length - 1) last = templet.id;
 							        });
 						        }
@@ -2132,7 +2180,7 @@
 	        				return false;
 				        }
 			        });
-		        }
+		        }else bus.$emit(broadcast.init);
 	        },
 	        
 	        /**
@@ -2407,15 +2455,15 @@
 		        				/** single image */
 		        				const single = initData[0];
 		        				let cover = single[mapping.fields.cover.one]
-							        ? `<img data-src="${single[mapping.fields.cover.one]}" class="${classes.block.cover}" />`
+							        ? `<img src="${single[mapping.fields.cover.one]}" class="${classes.block.cover}" />`
 							        : ``;
 		        				cover += single[mapping.fields.cover.two]
-							        ? `<img data-src="${single[mapping.fields.cover.two]}" class="${classes.block.cover}" />`
+							        ? `<img src="${single[mapping.fields.cover.two]}" class="${classes.block.cover}" />`
 							        : ``;
 		        				element.push(
 		        					`<Row ${string.params} style="${string.style}">`,
-							            `<Row class="${classes.drag.image}" v-lazy-container="{selector: 'img'}">`,
-							                `<img data-src="${single[mapping.fields.poster]}" class="${classes.block.image}" ${mapping.attrs.id}="${single[mapping.fields.id]}" />`,
+							            `<Row class="${classes.drag.image}">`,
+							                `<img src="${single[mapping.fields.poster]}" class="${classes.block.image}" ${mapping.attrs.id}="${single[mapping.fields.id]}" />`,
 							                cover,
 							            `</Row>`,
 							        `</Row>`
@@ -2873,7 +2921,8 @@
 	        			auto: typeof carousel.auto !== 'undefined' ? carousel.auto : true,
 				        speed: carousel.speed ? parseInt(carousel.speed) : 4000,
 				        radius: typeof carousel.radius !== 'undefined' ? carousel.radius : true
-			        }
+			        },
+			        filled: typeof config.check !== 'undefined' ? config.check : false
 		        };
 	        }
         },
@@ -2900,6 +2949,15 @@
 	            }
 	        },
 	        
+	        /**
+	         * 校验内容填充是否完整(check completely).
+	         * Verify that the content has been filled in completely。
+	         */
+	        check: function() {
+	            const vm = this;
+	            if(vm.check) vm.checkContentCompletely();
+	        },
+	        
             /**
              * 重新获取数据(reacquire data).
              * trigger `get-data` callback if the value is changed ( can call `this.$unique()` function to assignment ).
@@ -2908,6 +2966,18 @@
         	    const vm = this,
 		            data = vm.wrapComponentData();
         	    vm.$emit(broadcast.callback.layout, data);
+	        },
+	        
+	        /**
+	         * 设置默认选中的推荐位(The recommended position selected by default).
+	         * After initialization, is the best way to set this variable.
+	         */
+	        selected: function() {
+	            const vm = this;
+	            vm.$nextTick(() => {
+	                const element = document.querySelector('div[' + mapping.attrs.pos + '="' + vm.selected + '"]');
+	                if(element) element.click();
+	            });
 	        },
 	        
 	        /**
@@ -2958,7 +3028,7 @@
 	                temp[mapping.content.title] = cur[mapping.content.title];
 	                temp[mapping.content.sub] = cur[mapping.content.sub];
 	                temp[mapping.content.pos] = cur[mapping.content.pos];
-	                temp[mapping.row.blocks] = cur[mapping.module.list];
+	                temp[mapping.row.blocks] = cur[mapping.component.list];
 	                rows.push(temp);
 	            }
 	            for(let n = 0; n < rows.length; n++){
@@ -2966,13 +3036,13 @@
 		                length = current[mapping.row.blocks].length;
 	                for(let m = 0; m < length; m++){
 	                    const item = current[mapping.row.blocks][m],
-		                    len = item[mapping.module.position].length;
+		                    len = item[mapping.component.position].length;
 	                    for(let x = 0; x < len; x++){
-	                        const block = item[mapping.module.position][x];
+	                        const block = item[mapping.component.position][x];
 	                        let init = {};
-	                        init[mapping.module.init] = [];
+	                        init[mapping.component.init] = [];
 	                        if(block[mapping.fields.pos] && list[block[mapping.fields.pos]]){
-	                            init[mapping.module.init] = list[block[mapping.fields.pos]];
+	                            init[mapping.component.init] = list[block[mapping.fields.pos]];
 	                        }
 	                        Object.assign(block, init);
 	                    }
