@@ -4,6 +4,7 @@
  * debug
  * @type {boolean}
  */
+import Vue from 'vue'
 const debug = false;
 /**
  * embed
@@ -201,18 +202,20 @@ const regExps = {
  */
 const footer = 'Copyright &copy; 2018';
 
-export default {
-    debug,
-    embed,
-    title,
-    user,
-    id,
-    logo,
-    menu,
-    api,
-    files,
-    cookie,
-    regExps,
-    adapter,
-    footer
-}
+export default new Vue({
+    data: {
+        debug,
+        embed,
+        title,
+        user,
+        id,
+        logo,
+        menu,
+        api,
+        files,
+        cookie,
+        regExps,
+        adapter,
+        footer
+    }
+})
