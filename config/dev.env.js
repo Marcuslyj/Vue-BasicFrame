@@ -8,5 +8,5 @@ module.exports = merge(prodEnv, {
     UPLOAD_SERVER: '"https://dev-web-services.tvflnet.com"',
     FILE_SERVER: '"https://dev-file.tvflnet.com"',
     WEB_SERVICES: '"https://dev-web-services.tvflnet.com"',
-    AUTH_SERVICES: '"https://dev-authority-service.tvflnet.com"'
+    AUTH_SERVICES: '"https://dev-auth-service.tvflnet.com"'
 });
