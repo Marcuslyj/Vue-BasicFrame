@@ -5,5 +5,5 @@ module.exports = {
     UPLOAD_SERVER: '"https://web-services.tvflnet.com"',
     FILE_SERVER: '"https://file.tvflnet.com"',
     WEB_SERVICES: '"https://web-services.tvflnet.com"',
-    AUTH_SERVICES: '"https://authority-service.tvflnet.com"'
+    AUTH_SERVICES: '"https://auth-service.tvflnet.com"'
 };
