@@ -68,8 +68,8 @@
                 server = vm.config && vm.config.fileServer ? vm.config.fileServer : vm.G.files.server.download,
                 action = '/upload/normal/batch-file';
             return {
-                accept: this.config && this.config.accept ? this.config.accept : "image/jpeg,image/png",
-                format: this.config && this.config.format ? this.config.format : ['jpg', 'jpeg', 'png'],
+                accept: this.config && this.config.accept ? this.config.accept : "image/*",
+                format: this.config && this.config.format ? this.config.format : [],
                 
                 noteText: this.config && this.config.noteText ? this.config.noteText : "",
                 maxCount:
