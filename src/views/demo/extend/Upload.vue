@@ -21,11 +21,12 @@
                 <Row class="wi-item-label">图片上传 ( 多图 )</Row>
                 <Row class="wi-item-content">
                     <Row class="wi-upload">
-                        <image-upload v-model="images" :config="{
+                        <image-upload v-model="images" ref="uploadImages" :config="{
                             maxCount: 10,
                             fbId: 'F1704100',
                             maxSize: 3072,
-                            multiple: true
+                            multiple: true,
+                            dragable:true
                         }"></image-upload>
                     </Row>
                 </Row>
@@ -88,6 +89,11 @@
                     '    export default UploadDemoComponent;\n' +
                     '<\/script>'
             };
+        },
+        mounted(){
+            this.$refs.uploadImages.setDefaultList([
+                'https://dev-file.tvflnet.com/F17/04/100/8b071ef1-33b4-4cf1-8c67-790cca2f592a.jpg',
+            'https://dev-file.tvflnet.com/F17/04/100/d268d171-cc87-4426-a95e-4a87cddb8e2c.gif'])
         }
     };
     export default UploadComponent;
